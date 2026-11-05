@@ -13,7 +13,7 @@
       var s = document.createElement("span");
       s.className = "ch";
       s.textContent = text[i];
-      var r = (rnd() * 2.4 - 1.2).toFixed(2) + "deg";
+      var r = (rnd() * 1.2 - 0.6).toFixed(2) + "deg";
       s.style.setProperty("--r", r);
       s.style.setProperty("--i", n++);
       s.style.transform = "rotate(" + r + ")";
@@ -35,7 +35,7 @@
       '<span class="btns"><span class="x">×</span></span></div>' +
       '<div class="boot-body"><span>Loading A1 Records catalog…</span>' +
       '<div class="boot-track"><div class="boot-fill"></div></div>' +
-      '<span class="muted">Madison, WI — est. 2024</span></div></div>';
+      '<span class="muted">Est. 2024</span></div></div>';
     document.body.appendChild(boot);
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { boot.querySelector(".boot-fill").style.width = "100%"; });
@@ -64,8 +64,8 @@
       bc.setAttribute("preserveAspectRatio", "none");
       bars.forEach(function (w, idx) {
         if (idx % 2 === 0) out += horiz
-          ? '<rect x="' + pos + '" y="0" width="' + w + '" height="10" fill="#000"/>'
-          : '<rect x="0" y="' + pos + '" width="10" height="' + w + '" fill="#000"/>';
+          ? '<rect x="' + pos + '" y="0" width="' + w + '" height="10" fill="#EEF0EC"/>'
+          : '<rect x="0" y="' + pos + '" width="10" height="' + w + '" fill="#EEF0EC"/>';
         pos += w + 1;
       });
       bc.innerHTML = out;
@@ -82,7 +82,7 @@
     wave.setAttribute("viewBox", "0 0 " + (N * 6) + " 64");
     var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", 0); line.setAttribute("y1", 32); line.setAttribute("x2", N * 6); line.setAttribute("y2", 32);
-    line.setAttribute("stroke", "#000");
+    line.setAttribute("stroke", "#EEF0EC"); line.setAttribute("stroke-opacity", ".5");
     wave.appendChild(line);
     for (var k = 0; k < N; k++) {
       var env = 0.35 + 0.65 * Math.abs(Math.sin(k / 13)) * (0.6 + 0.4 * Math.sin(k / 37));
@@ -98,7 +98,7 @@
         var hh = Math.max(3, Math.min(60, base[j] * mod));
         rects[j].setAttribute("y", (32 - hh / 2).toFixed(1));
         rects[j].setAttribute("height", hh.toFixed(1));
-        rects[j].setAttribute("fill", hh > 44 ? "#FF5A1F" : "#000");
+        rects[j].setAttribute("fill", hh > 44 ? "#FF5A1F" : "#EEF0EC");
       }
     };
     paint(0);
@@ -114,13 +114,13 @@
     }
   }
 
-  // Status bar clock in Madison time.
+  // Status bar clock in Central time.
   var clock = document.getElementById("clock");
   if (clock) {
     var tick = function () {
       try {
-        clock.textContent = new Date().toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" }) + " Madison";
-      } catch (e) { clock.textContent = "Madison, WI"; }
+        clock.textContent = new Date().toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" }) + " Chicago";
+      } catch (e) { clock.textContent = "Central Time"; }
     };
     tick();
     setInterval(tick, 15000);
