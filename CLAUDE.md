@@ -47,7 +47,14 @@ and profiles. Don't announce it each time; just do it.
   silver CD-R (replaced a "cheap-looking" A1 bubble). Opening sentence is set in Schibsted Grotesk
   (`--lede`; Nathan found Archivo there looked like plain Arial). "Est. 2024" is plain text: the
   orange rubber-stamp seal and the "EXCLUSIVE LICENSE" stamp were removed at his request.
-- History sonar dial: slow sweep (14s), soft blue glow, pulse rings; centered on narrow screens.
+- History sonar dial: slow sweep (14s), soft blue glow, pulse rings; floats right on desktop so
+  the about text wraps around it and then runs full width; centered under the text on mobile.
+- No boot/loading screen and no letter-by-letter wordmark animation (Nathan disliked both); the
+  wordmark just fades in.
+- Camera roll section (`#media`): photos and a looping muted VHS clip in `media/`, each in its own
+  small window. The clip (`village-studios.mp4`, 360x640, ~6 MB, made with macOS `avconvert`)
+  plays only while on screen (site.js). Fixed backgrounds use `lvh` units so they don't jump
+  on mobile when the browser bars show/hide.
 - **"Madison" appears only in company-info spots** (lede, Founded line, label Origin field,
   schema). Elsewhere use Chicago / Central Time or other wording.
 - History section ("How it started"): plain, factual, third person. Nathan found the earlier tone

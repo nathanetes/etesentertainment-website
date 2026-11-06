@@ -50,7 +50,7 @@
         "@type": "Organization",
         "@id": "https://www.etesentertainment.com/#a1-records",
         "name": "A1 Records",
-        "alternateName": "A1 Records, a division of Etes Entertainment LLC",
+        "alternateName": ["A1 Records, a division of Etes Entertainment LLC", "Etes Records"],
         "url": "https://www.etesentertainment.com/#a1-records",
         "parentOrganization": { "@id": "https://www.etesentertainment.com/#organization" },
         "founder": { "@id": "https://www.nathanetes.com/#nathan-etes" },
@@ -144,16 +144,21 @@
     .muted { color: var(--ink-soft); }
 
     /* the desk: folded black poster, fixed behind the page */
+    /* Sized to the *largest* viewport (lvh) so the cover image doesn't rescale and jump when
+       mobile browser bars show/hide during scroll. */
     body::before {
-      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      content: ""; position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none;
+      width: 100vw; height: 100vh; height: 100lvh;
       background: var(--paper) var(--tx-desk) center / cover no-repeat;
       opacity: .85;
+      transform: translateZ(0);
     }
     /* film grain: a noise tile jittered 12 times a second, over everything.
        The layer is 200% of the viewport, so every step must stay within ±25% or an edge of the
        screen is left uncovered for that frame (that was the top-bar "blink"). */
     body::after {
-      content: ""; position: fixed; inset: -50%; pointer-events: none; z-index: 60;
+      content: ""; position: fixed; pointer-events: none; z-index: 60;
+      top: -50vh; top: -50lvh; left: -50vw; width: 200vw; height: 200vh; height: 200lvh;
       background: var(--tx-grain) 0 0 / 256px 256px repeat;
       opacity: .075;
       animation: grain .8s steps(1) infinite;
@@ -199,6 +204,8 @@
     .wordmark .ch { filter: url(#rough-lg); }
     @media (max-width: 700px) { .wordmark .ch { filter: url(#rough); } .wordmark .ink { -webkit-mask-size: 240px 240px; mask-size: 240px 240px; } }
     .wordmark .ch { display: inline-block; }
+    .wordmark { animation: fade-in 1.1s ease-out both; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
     /* ---------- window chrome ---------- */
     .titlebar {
@@ -332,7 +339,63 @@
     }
     .prose { max-width: 62ch; display: grid; gap: 12px; }
     .prose p { margin: 0; }
-    .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; align-items: start; }
+    /* About: the dial floats right and the text runs full width once it clears it */
+    .about-grid::after { content: ""; display: block; clear: both; }
+    .about-grid .prose { display: block; max-width: none; }
+    .about-grid .prose p + p { margin-top: 12px; }
+    .about-grid .dial { float: right; width: 260px; margin: 0 0 12px 32px; shape-outside: circle(50%); }
+
+    /* ---------- camera roll: photos + looping studio tape, each its own little window ---------- */
+    .roll {
+      display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .78fr) minmax(0, 1fr);
+      gap: clamp(18px, 2.6vw, 34px);
+      align-items: center; padding: 14px 6px 26px;
+    }
+    .shot {
+      margin: 0; min-width: 0; border: 1px solid var(--ink); background: var(--sheet);
+      box-shadow: 6px 6px 0 var(--ink);
+      transform: rotate(var(--tilt, 0deg)) translateY(var(--lift, 0px));
+      transition: transform .35s cubic-bezier(.2,.8,.3,1), box-shadow .35s;
+    }
+    .shot:hover { transform: rotate(0deg) translateY(calc(var(--lift, 0px) - 6px)); box-shadow: 10px 10px 0 var(--ink); }
+    .shot .titlebar { height: 26px; font-size: .66rem; }
+    .shot .btns span { width: 17px; height: 17px; font-size: 10px; }
+    @media (max-width: 1240px) { .shot .btns span:not(.x) { display: none; } }
+    .shot img { display: block; width: 100%; height: auto; border-bottom: var(--rule); }
+    .shot figcaption {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 10px; padding: 7px 10px;
+      font-family: var(--mono); font-size: var(--step--1); color: var(--ink-soft);
+    }
+    /* desktop: tape in the middle spanning both rows, two prints on each side */
+    .s-room  { grid-area: 1 / 1; --tilt: -2deg; }
+    .s-book  { grid-area: 1 / 3; --tilt: 2.2deg; --lift: 18px; }
+    .s-beach { grid-area: 2 / 1; --tilt: 1.4deg; --lift: -6px; }
+    .s-rocks { grid-area: 2 / 3; --tilt: -1.8deg; --lift: 8px; width: 82%; justify-self: center; }
+    .tape-win { grid-area: 1 / 2 / 3 / 3; --lift: -8px; box-shadow: 6px 6px 0 var(--aqua); }
+    .tape-win:hover { box-shadow: 10px 10px 0 var(--aqua); }
+    .screen { position: relative; background: #000; border-bottom: var(--rule); overflow: hidden; }
+    .screen video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; }
+    .screen::after { /* CRT scanlines + vignette over the tape */
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
+        radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0,0,0,.55));
+    }
+    .osd {
+      position: absolute; z-index: 1; left: 10px; top: 10px;
+      font-family: var(--pixel); font-size: .68rem; letter-spacing: .06em; color: #fff;
+      text-shadow: 0 0 6px rgba(0,0,0,.8);
+    }
+    .osd.br { left: auto; top: auto; right: 10px; bottom: 10px; }
+    .osd .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 6px var(--orange); margin-right: 6px; animation: blink 1.2s steps(1) infinite; }
+    .player {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 6px 10px; border-bottom: var(--rule);
+      background: linear-gradient(180deg, #20262A, var(--chrome-lo));
+      font-family: var(--mono); font-size: var(--step--1);
+    }
+    .player .seek { flex: 1; height: 6px; border: 1px solid var(--ink); border-radius: 3px; overflow: hidden; background: var(--paper); }
+    .player .seek i { display: block; height: 100%; width: var(--p, 0%); background: linear-gradient(180deg, #9FE6FF, var(--aqua)); }
     .dial {
       width: 100%; max-width: 260px; color: var(--orange);
       filter: drop-shadow(0 0 5px rgba(30,144,232,.45)) drop-shadow(0 0 14px rgba(30,144,232,.18));
@@ -432,17 +495,6 @@
     .copy:hover { background: linear-gradient(180deg, #FFB08F, var(--orange)); color: #fff; }
     .copy:active { transform: translate(2px, 2px); box-shadow: none; }
 
-    /* ---------- boot screen (added by script, first visit per session only) ---------- */
-    .boot { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--paper) 70%, transparent); transition: opacity .35s; }
-    .boot.out { opacity: 0; }
-    .boot-win { width: min(380px, calc(100vw - 32px)); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; background: var(--sheet); box-shadow: 6px 6px 0 var(--ink); }
-    .boot-body { padding: 16px; display: grid; gap: 10px; font-family: var(--mono); font-size: var(--step--1); }
-    .boot-track { height: 18px; border: 1px solid var(--ink); border-radius: 4px; background: var(--paper); overflow: hidden; }
-    .boot-fill { height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--aqua) 0 10px, #63C0F7 10px 12px); box-shadow: inset 0 6px 6px rgba(255,255,255,.5); transition: width .8s steps(12); }
-
-    /* letters press in once the boot screen clears */
-    .press .wordmark .ch { animation: press .38s cubic-bezier(.2,.9,.3,1.3) both; animation-delay: calc(var(--i) * 70ms); }
-    @keyframes press { from { transform: scale(1.35) rotate(var(--r)); opacity: 0; } 60% { opacity: 1; } to { transform: scale(1) rotate(var(--r)); } }
 
     /* ---------- responsive ---------- */
     @media (max-width: 860px) {
@@ -457,8 +509,15 @@
       .contact { grid-template-columns: 1fr; }
       .contact > div { border-right: 0; border-bottom: var(--rule); }
       .contact > div:last-child { border-bottom: 0; }
-      .about-grid { grid-template-columns: 1fr; }
-      .dial { max-width: 220px; justify-self: center; margin-inline: auto; }
+      .about-grid { display: flex; flex-direction: column; }
+      .about-grid .dial { float: none; order: 2; width: 100%; max-width: 220px; margin: 24px auto 0; shape-outside: none; }
+      .roll { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 22px; padding-inline: 2px; }
+      .shot { --lift: 0px; }
+      .s-room  { grid-area: 1 / 1 / 2 / 3; --tilt: -1.2deg; }
+      .tape-win { grid-area: 2 / 1 / 4 / 2; }
+      .s-book  { grid-area: 2 / 2; --tilt: 1.6deg; }
+      .s-rocks { grid-area: 3 / 2; width: auto; --tilt: -1.4deg; }
+      .s-beach { grid-area: 4 / 1 / 5 / 3; --tilt: 1deg; }
       .sky-grid { grid-template-columns: 1fr; }
       .statusbar { grid-template-columns: 1fr auto; }
       .statusbar .wide { display: none; }
@@ -466,6 +525,9 @@
     @media (max-width: 560px) {
       .bar > *:nth-child(3) { border-right: 0; grid-column: 1 / -1; border-bottom: var(--rule); }
       .bar nav { grid-column: 1 / -1; }
+      .roll { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+      .roll .shot { grid-area: auto; width: auto; }
+      .tape-win { width: min(100%, 300px) !important; justify-self: center; }
       .label-body { grid-template-columns: 1fr; }
       .label-main { border-right: 0; border-bottom: 2px solid var(--ink); }
       .label-side { grid-template-columns: auto 1fr auto; grid-template-rows: none; align-items: center; }
@@ -486,6 +548,8 @@
     @media (prefers-reduced-motion: reduce) {
       .disc, .dial .sweep, .led, body::after { animation: none; }
       .dial .ping { animation: none; opacity: 0; }
+      .wordmark { animation: none; }
+      .shot, .shot img { transition: none; }
       tbody tr, td.t a::before { transition: none; }
     }
   </style>
@@ -575,12 +639,6 @@
         <div class="content">
           <h2 class="ink" id="about-h">How it started</h2>
           <div class="about-grid">
-            <div class="prose">
-              <p>Nathan Etes started making music after watching Billie Eilish's documentary, <i>The World's a Little Blurry</i>. His first tracks were GarageBand loops on an iPad. He saved for a MacBook by doing jobs for neighbors and putting away gift money, then taught himself Logic Pro.</p>
-              <p>He wrote, produced, and recorded his first EP, CTY-S, over one summer at his family's lake house in northern Wisconsin. It came out in December 2022. Singles followed, including "Keys to My Heart" in 2023.</p>
-              <p>The business started after a music production and industry leadership program at UCLA. He spent a week there in the Sproul Hall dorms, working in a group to write, produce, record, and mix a song. He produced his single "MOVED ON FIRST" on the flight to Los Angeles and recorded its vocals in the dorm. He formed Etes Entertainment LLC in 2024, with A1 Records as its label.</p>
-              <p>The company handles each step of putting out his work: production, mixing and mastering, distribution, and registering the catalog with BMI, The MLC, and SoundExchange. His debut album, juniper, came out in 2025, and he has studied audio through Berklee Online since then. All music, lyrics, and art released by the company are human-made.</p>
-            </div>
             <svg class="dial" viewBox="0 0 260 260" aria-hidden="true">
               <circle cx="130" cy="130" r="118" fill="none" stroke="currentColor" stroke-width="1.5"/>
               <circle cx="130" cy="130" r="86" fill="none" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 5"/>
@@ -599,6 +657,77 @@
               <text x="10" y="250">SINCE 2022</text>
               <text x="198" y="250">EST. 2024</text>
             </svg>
+            <div class="prose">
+              <p>Nathan Etes started making music after watching Billie Eilish's documentary, <i>The World's a Little Blurry</i>. His first tracks were GarageBand loops on an iPad. He saved for a MacBook by doing jobs for neighbors and putting away gift money, then taught himself Logic Pro.</p>
+              <p>He wrote, produced, and recorded his first EP, CTY-S, over one summer at his family's lake house in northern Wisconsin. It came out in December 2022. Singles followed, including "Keys to My Heart" in 2023.</p>
+              <p>The business started after a music production and industry leadership program at UCLA. He spent a week there in the Sproul Hall dorms, working in a group to write, produce, record, and mix a song. He produced his single "MOVED ON FIRST" on the flight to Los Angeles and recorded its vocals in the dorm. He formed Etes Entertainment LLC in 2024, with A1 Records (previously Etes Records) as its label.</p>
+              <p>The program also showed him how the industry works for artists. Under a typical label deal, an artist keeps a small share of what their music earns, and most only see real income once they are filling stadiums on tour. Streaming pays very little per play, which makes it hard for independent artists to make a living. He started the company to release his music without signing to an outside label, and to learn every part of the business himself.</p>
+              <p>He works out of his own home studio, where he writes, produces, records, mixes, and masters each release himself. The setup is built around Universal Audio and Focusrite interfaces, Neumann and AKG microphones, Fender and Epiphone guitars, and analog synthesizers. He also directs the visual side of each project, including the cover art.</p>
+              <p>The company handles each step of putting out his work: production, mixing and mastering, distribution, and registering the catalog with BMI, The MLC, and SoundExchange. Every release carries an A1 Records catalog number under the prefix A1R-NE and is distributed worldwide. All music, lyrics, and art released by the company are human-made.</p>
+              <p>His debut album, juniper, came out in May 2025, followed that year by the singles "CERULEAN," "SUMMER'S OVER," and "LIKE WE'RE SUPPOSED TO DO." "DELOREAN" came out in March 2026 and the EP pose® boy songz in November 2026, with the single "THE GANZFELD EFFECT" out November 11, 2026. Alongside the label, he has studied audio through Berklee Online and continues to learn through mentorship and collaboration with creatives in Los Angeles.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" aria-labelledby="media-h">
+      <div class="titlebar dim">
+        <svg class="ico" aria-hidden="true"><use href="#g-folder"/></svg>
+        <span class="name">camera_roll</span>
+        <span class="meta">5 items</span>
+        <span class="btns" aria-hidden="true"><span>_</span><span>□</span><span class="x">×</span></span>
+      </div>
+      <div class="row">
+        <div class="tag mono"><svg class="glyph" style="color:var(--aqua)" aria-hidden="true"><use href="#g-signal"/></svg>Media</div>
+        <div class="content">
+          <h2 class="ink" id="media-h">Camera roll</h2>
+          <div class="roll">
+            <figure class="shot s-room">
+              <div class="titlebar dim" aria-hidden="true">
+                <svg class="ico"><use href="#g-file"/></svg><span class="name">IMG_3615.JPG</span>
+                <span class="btns"><span>_</span><span>□</span><span class="x">×</span></span>
+              </div>
+              <img src="/media/control-room.jpg" width="1800" height="1350" loading="lazy" decoding="async" alt="A recording studio control room with a large mixing console under pink and blue light.">
+              <figcaption><span>Control room</span><span>Los Angeles</span></figcaption>
+            </figure>
+            <figure class="shot tape-win">
+              <div class="titlebar" aria-hidden="true">
+                <svg class="ico"><use href="#g-cd"/></svg><span class="name">village_studios.mov</span>
+                <span class="btns"><span>_</span><span>□</span><span class="x">×</span></span>
+              </div>
+              <div class="screen">
+                <video id="tape" src="/media/village-studios.mp4" poster="/media/village-studios-poster.jpg" width="360" height="640" muted loop playsinline preload="none" aria-label="Looping footage from Village Studios in Los Angeles."></video>
+                <span class="osd" aria-hidden="true"><span class="dot"></span>PLAY</span>
+                <span class="osd br" aria-hidden="true">SP</span>
+              </div>
+              <div class="player" aria-hidden="true"><span>▶ LOOP</span><span class="seek"><i id="tape-seek"></i></span><span id="tape-tc">00:00:00</span></div>
+              <figcaption><span>Village Studios</span><span>Los Angeles</span></figcaption>
+            </figure>
+            <figure class="shot s-book">
+              <div class="titlebar dim" aria-hidden="true">
+                <svg class="ico"><use href="#g-file"/></svg><span class="name">IMG_3641.JPG</span>
+                <span class="btns"><span>_</span><span>□</span><span class="x">×</span></span>
+              </div>
+              <img src="/media/guest-book.jpg" width="1300" height="1300" loading="lazy" decoding="async" alt="Nathan Etes's signature in the Hollywood Bowl guest book, dated June 28, 2024.">
+              <figcaption><span>Hollywood Bowl guest book</span><span>06.28.24</span></figcaption>
+            </figure>
+            <figure class="shot s-beach">
+              <div class="titlebar dim" aria-hidden="true">
+                <svg class="ico"><use href="#g-file"/></svg><span class="name">ventura_pier_01.jpg</span>
+                <span class="btns"><span>_</span><span>□</span><span class="x">×</span></span>
+              </div>
+              <img src="/media/beach.jpg" width="1800" height="1080" loading="lazy" decoding="async" alt="Nathan Etes standing barefoot on Ventura Pier Beach, looking out at the ocean.">
+              <figcaption><span>Ventura Pier Beach</span><span>Nathan Etes</span></figcaption>
+            </figure>
+            <figure class="shot s-rocks">
+              <div class="titlebar dim" aria-hidden="true">
+                <svg class="ico"><use href="#g-file"/></svg><span class="name">ventura_pier_02.jpg</span>
+                <span class="btns"><span>_</span><span>□</span><span class="x">×</span></span>
+              </div>
+              <img src="/media/rocks.jpg" width="1200" height="1200" loading="lazy" decoding="async" alt="Nathan Etes standing on the rocks at Ventura Pier Beach against a clear blue sky.">
+              <figcaption><span>Ventura Pier Beach</span><span>Nathan Etes</span></figcaption>
+            </figure>
           </div>
         </div>
       </div>

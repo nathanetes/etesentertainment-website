@@ -23,29 +23,27 @@
   var h1 = document.getElementById("company");
   if (h1) h1.setAttribute("aria-label", "Etes Entertainment");
 
-  // Boot screen: first visit per session only, skipped for reduced motion.
-  var seen = false;
-  try { seen = sessionStorage.getItem("etes-booted") === "1"; } catch (e) {}
-  if (!reduce && !seen) {
-    var boot = document.createElement("div");
-    boot.className = "boot";
-    boot.setAttribute("aria-hidden", "true");
-    boot.innerHTML =
-      '<div class="boot-win"><div class="titlebar"><span class="name">Etes Entertainment LLC</span>' +
-      '<span class="btns"><span class="x">×</span></span></div>' +
-      '<div class="boot-body"><span>Loading A1 Records catalog…</span>' +
-      '<div class="boot-track"><div class="boot-fill"></div></div>' +
-      '<span class="muted">Est. 2024</span></div></div>';
-    document.body.appendChild(boot);
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { boot.querySelector(".boot-fill").style.width = "100%"; });
+  // Studio tape: loops muted while on screen, paused otherwise; still frame for reduced motion.
+  var tape = document.getElementById("tape");
+  if (tape) {
+    var tc = document.getElementById("tape-tc"), seek = document.getElementById("tape-seek");
+    var pad = function (v) { return (v < 10 ? "0" : "") + v; };
+    tape.addEventListener("timeupdate", function () {
+      var t = tape.currentTime, f = Math.floor((t % 1) * 30);
+      if (tc) tc.textContent = "00:" + pad(Math.floor(t)) + ":" + pad(f);
+      if (seek && tape.duration) seek.style.setProperty("--p", (t / tape.duration * 100).toFixed(1) + "%");
     });
-    setTimeout(function () {
-      boot.classList.add("out");
-      document.body.classList.add("press");
-      setTimeout(function () { boot.remove(); }, 400);
-    }, 1000);
-    try { sessionStorage.setItem("etes-booted", "1"); } catch (e) {}
+    if (reduce) {
+      tape.removeAttribute("autoplay");
+      tape.setAttribute("controls", "");
+    } else if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (e) {
+        if (e[0].isIntersecting) { var p = tape.play(); if (p && p.catch) p.catch(function () {}); }
+        else tape.pause();
+      }, { rootMargin: "200px" }).observe(tape);
+    } else {
+      tape.play();
+    }
   }
 
   // Barcode drawn from the catalog prefix.
