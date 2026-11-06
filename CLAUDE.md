@@ -32,16 +32,22 @@ and profiles. Don't announce it each time; just do it.
 - Concept: "Frutiger Aero meets modern brutalism", early-2000s desktop. Every section is an OS
   window with a title bar (file names like `about.txt`, `label_info.lbl`, `contact.vcf`) and the
   page ends in a status bar (blinking "Done" LED, Chicago clock).
-- Black card stock background (`--paper #070808`) with a subtle paper-fiber texture (`--fiber`),
-  white ink text (`--ink #EEF0EC`), screen grain overlay, faint scanlines.
+- Black card stock (`--paper #070808`), white ink text (`--ink #EEF0EC`), faint scanlines.
+  Textures are Nathan's scanned files in `textures/` (the old SVG `--fiber` texture looked awful
+  and is gone): `folded-poster.jpg` = fixed desk behind the page, `scratches.jpg` = the page itself,
+  `sleeve.jpg` = worn record sleeve behind the hero, `grain.png` = animated film grain over
+  everything (`body::after`, off for reduced motion).
 - Accents: Aero blue `#1E90E8` (the machine) and signal orange `#FF5A1F` (the hand). Green
   `#78C93C` only inside glass/sky elements. **No rainbow / multi-color sequences** (it read as a
   pride flag). Avoid yellow and magenta.
 - Type: Archivo variable (wdth 62 for display), IBM Plex Mono for data, Silkscreen for title bars.
   Display type is "stamped ink": speckle mask + SVG displacement filters `#rough` / `#rough-lg`.
   Nathan wanted the edges cleaned up from the first version; keep displacement subtle.
-- Hero: giant ETES / ENTERTAINMENT wordmark, a spinning silver CD-R (replaced a "cheap-looking"
-  A1 bubble) and an orange rubber-stamp "EST. 2024" seal (replaced a bubble sticker).
+- Hero: giant ETES / ENTERTAINMENT wordmark (no divider line between the words), a spinning
+  silver CD-R (replaced a "cheap-looking" A1 bubble). Opening sentence is set in Schibsted Grotesk
+  (`--lede`; Nathan found Archivo there looked like plain Arial). "Est. 2024" is plain text: the
+  orange rubber-stamp seal and the "EXCLUSIVE LICENSE" stamp were removed at his request.
+- History sonar dial: slow sweep (14s), soft blue glow, pulse rings; centered on narrow screens.
 - **"Madison" appears only in company-info spots** (lede, Founded line, label Origin field,
   schema). Elsewhere use Chicago / Central Time or other wording.
 - History section ("How it started"): plain, factual, third person. Nathan found the earlier tone
@@ -66,7 +72,7 @@ CTY-S (EP, 2022-12-16, 6). Each links to its page on nathanetes.com/discography/
 - Artist site: nathanetes.com, repo `~/GitHub/nathanetes-website` (Cloudflare Pages from `main`).
   On Nov 5 its `security-headers` branch got: Organization schema, Discogs/ISNI links, the
   Google tag `GTM-PXQX45Q9` on every page, CSP allowances for Google tags, and privacy policy text
-  about the tag. Check whether that branch was merged and deployed.
+  about the tag. Merged to `main` and live (tag confirmed in the page source, Nov 5).
 - Email: Zoho Mail free plan for etesentertainment.com. SPF, DKIM and DMARC (`p=none`) are set in
   Cloudflare DNS. After a couple of weeks of clean sending, consider DMARC `p=quarantine`.
 - Google Ads: account owned by management@etesentertainment.com (mom, verified advertiser), with

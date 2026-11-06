@@ -83,6 +83,7 @@
     @font-face { font-family: "Archivo"; src: url("/fonts/archivo-var.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
     @font-face { font-family: "IBM Plex Mono"; src: url("/fonts/plex-mono-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
     @font-face { font-family: "IBM Plex Mono"; src: url("/fonts/plex-mono-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+    @font-face { font-family: "Schibsted Grotesk"; src: url("/fonts/schibsted-grotesk-var.woff2") format("woff2"); font-weight: 400 900; font-display: swap; }
     @font-face { font-family: "Silkscreen"; src: url("/fonts/silkscreen-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 
     /* Layout: a 2000s desktop on a brutal grid, printed on black stock. Every section is an OS
@@ -95,7 +96,12 @@
       --ink-soft: #9AA39F;
       --chrome-hi: #3B4349;  /* dark window chrome */
       --chrome-lo: #15191C;
-      --fiber: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.018 .055' numOctaves='5' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .16 -.055'/></filter><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='1' seed='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .26 -.17'/></filter><rect width='100%' height='100%' filter='url(%23f)'/><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+      /* scanned textures (textures/): folded poster = the desk, scratched stock = the page,
+         worn record sleeve = behind the hero, grain.png = moving film grain over everything */
+      --tx-desk: url("/textures/folded-poster.jpg");
+      --tx-page: url("/textures/scratches.jpg");
+      --tx-sleeve: url("/textures/sleeve.jpg");
+      --tx-grain: url("/textures/grain.png");
       --aqua: #1E90E8;
       --aqua-deep: #0A4BA8;
       --aqua-light: #9FE6FF;
@@ -105,6 +111,7 @@
 
       --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
       --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+      --lede: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
       --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
       --pixel: "Silkscreen", "IBM Plex Mono", ui-monospace, monospace;
 
@@ -121,7 +128,7 @@
     html { -webkit-text-size-adjust: 100%; }
     body {
       margin: 0;
-      background: var(--paper) var(--fiber);
+      background: var(--paper);
       color: var(--ink);
       font-family: var(--body);
       font-size: var(--step-0);
@@ -136,17 +143,42 @@
     .mono { font-family: var(--mono); font-size: var(--step--1); letter-spacing: 0.02em; }
     .muted { color: var(--ink-soft); }
 
-    /* film grain + CRT scanlines */
+    /* the desk: folded black poster, fixed behind the page */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: var(--paper) var(--tx-desk) center / cover no-repeat;
+      opacity: .85;
+    }
+    /* film grain: a noise tile jittered 12 times a second, over everything.
+       The layer is 200% of the viewport, so every step must stay within ±25% or an edge of the
+       screen is left uncovered for that frame (that was the top-bar "blink"). */
     body::after {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 60;
-      opacity: .11; mix-blend-mode: screen;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      content: ""; position: fixed; inset: -50%; pointer-events: none; z-index: 60;
+      background: var(--tx-grain) 0 0 / 256px 256px repeat;
+      opacity: .075;
+      animation: grain .8s steps(1) infinite;
+      will-change: transform;
+    }
+    @keyframes grain {
+      0%   { transform: translate(0, 0); }
+      10%  { transform: translate(-5%, -8%); }
+      20%  { transform: translate(-13%, 4%); }
+      30%  { transform: translate(6%, -21%); }
+      40%  { transform: translate(-4%, 21%); }
+      50%  { transform: translate(-13%, 9%); }
+      60%  { transform: translate(14%, 0); }
+      70%  { transform: translate(0, 13%); }
+      80%  { transform: translate(3%, 17%); }
+      90%  { transform: translate(-9%, 8%); }
     }
     .sheet {
       position: relative;
       max-width: 1240px; margin: 0 auto;
       border: var(--rule);
-      background: var(--paper) var(--fiber);
+      background:
+        linear-gradient(rgba(7,8,8,.35), rgba(7,8,8,.35)),
+        var(--tx-page) 0 0 / 1600px auto repeat,
+        var(--paper);
       box-shadow: 8px 8px 0 var(--aqua);
     }
     .sheet::after {
@@ -220,7 +252,13 @@
     .bar nav a:hover { color: var(--orange); text-decoration: underline; text-underline-offset: 3px; }
 
     /* ---------- hero ---------- */
-    .hero { position: relative; border-bottom: var(--rule); overflow: hidden; }
+    .hero {
+      position: relative; border-bottom: var(--rule); overflow: hidden;
+      /* worn record sleeve, cropped past its edges so only the ring wear shows */
+      background:
+        linear-gradient(90deg, rgba(7,8,8,.5), rgba(7,8,8,.05) 70%),
+        var(--tx-sleeve) 50% 40% / max(118%, 1000px) auto no-repeat;
+    }
     .wordmark {
       margin: 0;
       font-family: var(--display); font-weight: 900; font-stretch: 62%;
@@ -232,7 +270,7 @@
     .wordmark .w2 {
       display: block;
       font-size: min(11.8rem, calc((100vw - 64px) / 6.5));
-      padding-block: 6px 14px; border-top: var(--rule);
+      padding-block: 6px 14px;
       margin-inline: -14px; padding-inline: 14px;
     }
     .reg { position: absolute; width: 18px; height: 18px; color: var(--ink); pointer-events: none; left: 6px; top: 6px; }
@@ -271,14 +309,12 @@
 
     .hero-foot { display: grid; grid-template-columns: 1.6fr 1fr; border-top: var(--rule); }
     .hero-foot > * { padding: 18px 14px; min-width: 0; }
-    .lede { margin: 0; font-size: var(--step-1); line-height: 1.4; max-width: 40ch; border-right: var(--rule); text-wrap: pretty; }
+    .lede { margin: 0; font-family: var(--lede); font-weight: 450; font-size: var(--step-1); line-height: 1.38; letter-spacing: -0.012em; max-width: 40ch; border-right: var(--rule); text-wrap: pretty; }
     .facts { display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
     .spec { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-content: start; }
     .spec dt { color: var(--ink-soft); }
     .spec dd { margin: 0; }
-    .rubber { width: 130px; height: 130px; flex: none; color: var(--orange); transform: rotate(-14deg); }
-    .rubber text { font-family: var(--mono); font-weight: 500; fill: currentColor; }
-    .rubber .big { font-family: var(--display); font-weight: 900; font-variation-settings: "wdth" 70; }
+    .est { margin: 0; font-family: var(--lede); font-size: var(--step-1); font-weight: 500; letter-spacing: -0.01em; }
 
     /* live meter */
     .wave { display: block; width: 100%; height: 64px; border-bottom: var(--rule); background: var(--sheet); }
@@ -297,9 +333,16 @@
     .prose { max-width: 62ch; display: grid; gap: 12px; }
     .prose p { margin: 0; }
     .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; align-items: start; }
-    .dial { width: 100%; max-width: 260px; color: var(--orange); }
+    .dial {
+      width: 100%; max-width: 260px; color: var(--orange);
+      filter: drop-shadow(0 0 5px rgba(30,144,232,.45)) drop-shadow(0 0 14px rgba(30,144,232,.18));
+    }
     .dial text { fill: var(--ink); font-family: var(--mono); font-size: 9px; }
-    .dial .sweep { transform-origin: 130px 130px; animation: spin 6s linear infinite; }
+    .dial .sweep { transform-origin: 130px 130px; animation: spin 14s linear infinite; }
+    /* sonar pulse: rings that leave the center and fade at the outer edge */
+    .dial .ping { transform-origin: 130px 130px; transform: scale(0); opacity: 0; animation: ping 4.2s cubic-bezier(.15,.55,.35,1) infinite; }
+    .dial .ping.p2 { animation-delay: 2.1s; }
+    @keyframes ping { 0% { transform: scale(.04); opacity: .95; } 100% { transform: scale(1); opacity: 0; } }
 
     /* ---------- A1 Records: sky + label window ---------- */
     .sky {
@@ -351,12 +394,6 @@
     }
     .pill:hover { background: linear-gradient(180deg, #FFB08F, var(--orange)); color: #fff; }
     .pill:active { transform: translate(2px, 2px); box-shadow: none; }
-    .stamp {
-      position: absolute; right: 18px; bottom: 18px;
-      padding: 6px 10px; border: 2px solid var(--orange); color: var(--orange);
-      border-radius: 4px; transform: rotate(8deg);
-      font-family: var(--mono); font-weight: 500; font-size: .7rem; letter-spacing: .08em;
-    }
     .sky-note { color: #fff; text-shadow: 0 1px 2px rgba(0,40,110,.5); display: grid; gap: 6px; }
     .sky-note b { font-family: var(--pixel); font-weight: 400; font-size: .8rem; }
 
@@ -421,7 +458,7 @@
       .contact > div { border-right: 0; border-bottom: var(--rule); }
       .contact > div:last-child { border-bottom: 0; }
       .about-grid { grid-template-columns: 1fr; }
-      .dial { max-width: 200px; }
+      .dial { max-width: 220px; justify-self: center; margin-inline: auto; }
       .sky-grid { grid-template-columns: 1fr; }
       .statusbar { grid-template-columns: 1fr auto; }
       .statusbar .wide { display: none; }
@@ -430,7 +467,7 @@
       .bar > *:nth-child(3) { border-right: 0; grid-column: 1 / -1; border-bottom: var(--rule); }
       .bar nav { grid-column: 1 / -1; }
       .label-body { grid-template-columns: 1fr; }
-      .label-main { border-right: 0; border-bottom: 2px solid var(--ink); padding-bottom: 64px; }
+      .label-main { border-right: 0; border-bottom: 2px solid var(--ink); }
       .label-side { grid-template-columns: auto 1fr auto; grid-template-rows: none; align-items: center; }
       .label-side .vert { writing-mode: horizontal-tb; transform: none; }
       .barcode { width: 150px; height: 44px; justify-self: center; }
@@ -443,12 +480,12 @@
       td { border: 0; padding: 0; }
       td.t { grid-column: 1 / -1; padding-bottom: 6px; }
       td:last-child::after { content: attr(data-u); }
-      .rubber { width: 104px; height: 104px; }
       .titlebar .meta { display: none; }
       .sheet { box-shadow: 4px 4px 0 var(--ink); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .disc, .dial .sweep, .led { animation: none; }
+      .disc, .dial .sweep, .led, body::after { animation: none; }
+      .dial .ping { animation: none; opacity: 0; }
       tbody tr, td.t a::before { transition: none; }
     }
   </style>
@@ -519,14 +556,7 @@
             <dt>Founder</dt><dd><a href="https://www.nathanetes.com/">Nathan Etes</a></dd>
             <dt>Division</dt><dd><a href="#a1-records">A1 Records</a></dd>
           </dl>
-          <svg class="rubber ink" viewBox="0 0 130 130" aria-hidden="true">
-            <defs><path id="stampring" d="M65,65 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"/></defs>
-            <circle cx="65" cy="65" r="61" fill="none" stroke="currentColor" stroke-width="3.5"/>
-            <circle cx="65" cy="65" r="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
-            <text font-size="9.2" letter-spacing="1.4"><textPath href="#stampring">ETES ENTERTAINMENT LLC ★ INDEPENDENT ★ A1 ★</textPath></text>
-            <text x="65" y="60" text-anchor="middle" font-size="9" letter-spacing="2">EST.</text>
-            <text class="big" x="65" y="84" text-anchor="middle" font-size="27">2024</text>
-          </svg>
+          <p class="est" aria-hidden="true">Est. 2024</p>
         </div>
       </div>
     </section>
@@ -557,6 +587,8 @@
               <circle cx="130" cy="130" r="52" fill="none" stroke="var(--aqua)" stroke-width="1.5"/>
               <ellipse cx="130" cy="130" rx="40" ry="118" fill="none" stroke="currentColor" stroke-width="1"/>
               <ellipse cx="130" cy="130" rx="118" ry="40" fill="none" stroke="currentColor" stroke-width="1"/>
+              <circle class="ping" cx="130" cy="130" r="116" fill="none" stroke="var(--aqua)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              <circle class="ping p2" cx="130" cy="130" r="116" fill="none" stroke="var(--aqua)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
               <g class="sweep"><path d="M130 130 L130 14" stroke="var(--aqua)" stroke-width="1" stroke-opacity=".7"/><path d="M130 130 L130 14 A116 116 0 0 1 170 21 Z" fill="var(--aqua)" fill-opacity=".12"/></g>
               <path d="M130 4v18M130 238v18M4 130h18M238 130h18" stroke="var(--ink)" stroke-width="1.5"/>
               <path d="M130 130 L172 82" stroke="var(--aqua-deep)" stroke-width="2.5" stroke-linecap="round"/>
@@ -610,7 +642,6 @@
                   <a class="pill" href="https://www.discogs.com/label/4744017-A1-Records-13" rel="noopener">Discogs</a>
                   <a class="pill" href="https://www.nathanetes.com/discography/">Discography</a>
                 </div>
-                <span class="stamp ink" aria-hidden="true">EXCLUSIVE LICENSE</span>
               </div>
               <div class="label-side mono">
                 <span class="vert">Etes Ent. LLC</span>
