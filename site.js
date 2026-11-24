@@ -12,7 +12,7 @@
     for (var i = 0; i < text.length; i++) {
       var s = document.createElement("span");
       s.className = "ch";
-      s.textContent = text[i];
+      s.textContent = text[i] === " " ? "\u00a0" : text[i];
       var r = (rnd() * 1.2 - 0.6).toFixed(2) + "deg";
       s.style.setProperty("--r", r);
       s.style.setProperty("--i", n++);
@@ -21,7 +21,7 @@
     }
   });
   var h1 = document.getElementById("company");
-  if (h1) h1.setAttribute("aria-label", "Etes Entertainment");
+  if (h1) h1.setAttribute("aria-label", "A1 Records, Etes Entertainment");
 
   // Studio tape: loops muted while on screen, paused otherwise; still frame for reduced motion.
   var tape = document.getElementById("tape");

@@ -43,7 +43,8 @@ and profiles. Don't announce it each time; just do it.
 - Type: Archivo variable (wdth 62 for display), IBM Plex Mono for data, Silkscreen for title bars.
   Display type is "stamped ink": speckle mask + SVG displacement filters `#rough` / `#rough-lg`.
   Nathan wanted the edges cleaned up from the first version; keep displacement subtle.
-- Hero: giant ETES / ENTERTAINMENT wordmark (no divider line between the words), a spinning
+- Hero: wordmark reads A1 RECORDS with ETES ENTERTAINMENT beneath (changed Nov 24; both lines sized
+  to stop short of the disc via `--lane`), a spinning
   silver CD-R (replaced a "cheap-looking" A1 bubble). Opening sentence is set in Schibsted Grotesk
   (`--lede`; Nathan found Archivo there looked like plain Arial). "Est. 2024" is plain text: the
   orange rubber-stamp seal and the "EXCLUSIVE LICENSE" stamp were removed at his request.
@@ -60,6 +61,11 @@ and profiles. Don't announce it each time; just do it.
 - History section ("How it started"): plain, factual, third person. Nathan found the earlier tone
   cheesy; avoid hype.
 - OSCILLATIONS (next album) is not publicly announced; keep it off the site until it is.
+
+## Socials
+- Instagram https://www.instagram.com/etesentertainmentllc/ and Facebook (share link
+  https://www.facebook.com/share/1RQVD1ybiB/ — swap for the page's permanent facebook.com/... URL when known).
+  Icons in the top bar and a "Follow" column in contact; both in `#organization` sameAs.
 
 ## Schema (in index.html)
 - `#organization` (Etes Entertainment LLC, foundingDate 2024, foundingLocation Madison),

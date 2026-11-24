@@ -37,6 +37,10 @@
         "foundingLocation": { "@type": "Place", "name": "Madison, Wisconsin, United States" },
         "founder": { "@id": "https://www.nathanetes.com/#nathan-etes" },
         "description": "Etes Entertainment LLC, established in Madison, WI, in 2024, is a music company founded by producer, artist, and audio engineer Nathan Etes, and the home of independent label A1 Records.",
+        "sameAs": [
+          "https://www.instagram.com/etesentertainmentllc/",
+          "https://www.facebook.com/share/1RQVD1ybiB/"
+        ],
         "subOrganization": { "@id": "https://www.etesentertainment.com/#a1-records" },
         "brand": { "@id": "https://www.etesentertainment.com/#a1-records" },
         "contactPoint": {
@@ -256,6 +260,19 @@
     .bar nav { display: flex; gap: 18px; flex-wrap: wrap; }
     .bar nav a { text-decoration: none; }
     .bar nav a:hover { color: var(--orange); text-decoration: underline; text-underline-offset: 3px; }
+    .bar nav { align-items: center; }
+    .bar nav .soc { display: inline-grid; place-items: center; width: 18px; height: 18px; }
+    .bar nav .soc svg { width: 16px; height: 16px; }
+    .socials { display: flex; flex-wrap: wrap; gap: 10px; }
+    .social {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px;
+      border: 1px solid var(--ink); border-radius: 6px; text-decoration: none;
+      font-family: var(--mono); font-size: var(--step--1);
+      background: linear-gradient(180deg, #2E363C, #14181B); box-shadow: 2px 2px 0 var(--ink);
+    }
+    .social svg { width: 18px; height: 18px; }
+    .social:hover { background: linear-gradient(180deg, #FFB08F, var(--orange)); color: #fff; }
+    .social:active { transform: translate(2px, 2px); box-shadow: none; }
 
     /* ---------- hero ---------- */
     .hero {
@@ -272,10 +289,15 @@
       line-height: 0.8; letter-spacing: -0.01em; text-transform: uppercase;
       padding: 18px 14px 0;
     }
-    .wordmark .w1 { display: block; font-size: clamp(7rem, 30vw, 24rem); }
+    /* each line is sized to its own text width: A1 RECORDS stops short of the disc, ETES ENTERTAINMENT runs edge to edge */
+    .wordmark { --disc: clamp(96px, 19vw, 250px); --lane: calc(min(1240px, 100vw - 32px) - 34px - var(--disc) - min(3vw, 44px) - 24px); }
+    .hero { --disc: clamp(96px, 19vw, 250px); }
+    .wordmark .w1, .wordmark .w2 { white-space: nowrap; }
+    .wordmark { min-height: calc(var(--disc) + clamp(14px, 2.2vw, 30px) + 14px); }
+    .wordmark .w1 { display: block; font-size: calc(var(--lane) / 4.6); }
     .wordmark .w2 {
       display: block;
-      font-size: min(11.8rem, calc((100vw - 64px) / 6.5));
+      font-size: calc(var(--lane) / 8.55);
       padding-block: 6px 14px;
       margin-inline: -14px; padding-inline: 14px;
     }
@@ -286,7 +308,7 @@
       position: absolute;
       right: clamp(10px, 3vw, 44px);
       top: clamp(14px, 2.2vw, 30px);
-      width: clamp(96px, 23vw, 310px);
+      width: var(--disc);
       aspect-ratio: 1; max-width: 100%;
       filter: drop-shadow(6px 8px 0 var(--aqua));
     }
@@ -479,12 +501,12 @@
     .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 14px; }
 
     /* ---------- contact ---------- */
-    .contact { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--rule); }
+    .contact { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--rule); }
     .contact > div { padding: 16px 14px 20px; border-right: var(--rule); min-width: 0; }
     .contact > div:last-child { border-right: 0; }
     .contact h3 { margin: 0 0 8px; font-weight: 600; font-size: var(--step-1); display: flex; align-items: center; gap: 10px; }
     .glyph { display: inline-block; width: 22px; height: 22px; flex: none; }
-    .addr { font-family: var(--mono); font-size: 0.95rem; overflow-wrap: anywhere; user-select: all; }
+    .addr { font-family: var(--mono); font-size: 0.82rem; overflow-wrap: anywhere; user-select: all; }
     .copy {
       margin-top: 10px; font-family: var(--mono); font-size: var(--step--1);
       padding: 6px 12px; border: 1px solid var(--ink); border-radius: 6px;
@@ -496,6 +518,11 @@
 
 
     /* ---------- responsive ---------- */
+    @media (max-width: 1100px) and (min-width: 861px) {
+      .contact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .contact > div:nth-child(2) { border-right: 0; }
+      .contact > div:nth-child(-n+2) { border-bottom: var(--rule); }
+    }
     @media (max-width: 860px) {
       .bar { grid-template-columns: 1fr 1fr; }
       .bar > *:nth-child(2) { border-right: 0; }
@@ -522,6 +549,9 @@
       .statusbar .wide { display: none; }
     }
     @media (max-width: 560px) {
+      .hero, .wordmark { --disc: 56px; }
+      .disc-wrap { top: 8px; right: 12px; filter: drop-shadow(3px 4px 0 var(--aqua)); }
+      .wordmark .w2 { font-size: calc((100vw - 66px) / 8.55); }
       .bar > *:nth-child(3) { border-right: 0; grid-column: 1 / -1; border-bottom: var(--rule); }
       .bar nav { grid-column: 1 / -1; }
       .roll { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -570,6 +600,8 @@
     <symbol id="g-disc" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14.5" fill="currentColor"/><circle cx="16" cy="16" r="10" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".8"/><circle cx="16" cy="16" r="7" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".8"/><circle cx="16" cy="16" r="3.2" fill="#fff"/><path d="M6 9 A12 12 0 0 1 13 4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></symbol>
     <symbol id="g-signal" viewBox="0 0 32 32"><circle cx="16" cy="22" r="3" fill="currentColor"/><path d="M9 15 a10 10 0 0 1 14 0M5 11 a15 15 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 25v6" stroke="currentColor" stroke-width="2.4"/></symbol>
     <symbol id="g-node" viewBox="0 0 32 32"><circle cx="6" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="26" cy="16" r="4" fill="currentColor"/><path d="M10 16 C14 6 18 26 22 16" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="g-ig" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.3" fill="currentColor"/></symbol>
+    <symbol id="g-fb" viewBox="0 0 24 24"><path d="M13.6 21.5v-8h2.7l.4-3.2h-3.1V8.3c0-.9.3-1.5 1.6-1.5h1.6V3.9c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.4H7.7v3.2h2.7v8z" fill="currentColor"/></symbol>
     <symbol id="g-globe" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="16" cy="16" rx="6" ry="14" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2 16h28M5 9h22M5 23h22" stroke="currentColor" stroke-width="1.4"/></symbol>
     <symbol id="g-file" viewBox="0 0 16 16"><path d="M3 1h7l3 3v11H3z" fill="#fff" stroke="#000"/><path d="M10 1v3h3" fill="none" stroke="#000"/><path d="M5 8h6M5 10.5h6M5 13h4" stroke="#1E90E8"/></symbol>
     <symbol id="g-cd" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#E6ECF0" stroke="#000"/><circle cx="8" cy="8" r="2" fill="#fff" stroke="#000"/><path d="M3.5 5.5 A5 5 0 0 1 6 3" fill="none" stroke="#FF5A1F" stroke-width="1.4"/></symbol>
@@ -593,6 +625,8 @@
         <a href="#a1-records">A1 Records</a>
         <a href="#catalog">Catalog</a>
         <a href="#contact">Contact</a>
+        <a class="soc" href="https://www.instagram.com/etesentertainmentllc/" rel="noopener" aria-label="Instagram"><svg aria-hidden="true"><use href="#g-ig"/></svg></a>
+        <a class="soc" href="https://www.facebook.com/share/1RQVD1ybiB/" rel="noopener" aria-label="Facebook"><svg aria-hidden="true"><use href="#g-fb"/></svg></a>
       </nav>
     </header>
 
@@ -613,8 +647,8 @@
       </div>
       <svg class="reg" aria-hidden="true"><use href="#g-reg"/></svg>
       <h1 class="wordmark" id="company">
-        <span class="w1 ink">Etes</span>
-        <span class="w2 ink">Entertainment</span>
+        <span class="w1 ink">A1 Records</span>
+        <span class="w2 ink">Etes Entertainment</span>
       </h1>
       <div class="hero-foot">
         <p class="lede">Etes Entertainment LLC, established in Madison, WI, in 2024, is a music company founded by producer, artist, and audio engineer Nathan Etes, and the home of independent label A1 Records.</p>
@@ -828,7 +862,7 @@
       <div class="titlebar dim">
         <svg class="ico" aria-hidden="true"><use href="#g-card"/></svg>
         <span class="name">contact.vcf</span>
-        <span class="meta">3 entries</span>
+        <span class="meta">4 entries</span>
         <span class="btns" aria-hidden="true"><span>_</span><span>□</span><span class="x">×</span></span>
       </div>
       <div class="row" style="border-bottom:0">
@@ -855,6 +889,14 @@
             <a href="https://musicbrainz.org/label/cdd0e025-6a9d-4df0-8827-29512229666f" rel="noopener">A1 Records on MusicBrainz</a>
             <a href="https://www.discogs.com/label/4744017-A1-Records-13" rel="noopener">A1 Records on Discogs</a>
           </div>
+        </div>
+        <div>
+          <h3><svg class="glyph" style="color:var(--aqua)" aria-hidden="true"><use href="#g-signal"/></svg>Follow</h3>
+          <div class="socials">
+            <a class="social" href="https://www.instagram.com/etesentertainmentllc/" rel="noopener"><svg aria-hidden="true"><use href="#g-ig"/></svg>Instagram</a>
+            <a class="social" href="https://www.facebook.com/share/1RQVD1ybiB/" rel="noopener"><svg aria-hidden="true"><use href="#g-fb"/></svg>Facebook</a>
+          </div>
+          <p class="mono muted" style="margin:10px 0 0">@etesentertainmentllc</p>
         </div>
       </div>
     </section>
