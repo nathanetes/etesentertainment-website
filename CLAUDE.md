@@ -63,7 +63,7 @@ and profiles. Don't announce it each time; just do it.
 - OSCILLATIONS (next album) is not publicly announced; keep it off the site until it is.
 
 ## Socials
-- Instagram https://www.instagram.com/etesentertainmentllc/ and Facebook https://www.facebook.com/etesentertainmentllc
+- Instagram https://www.instagram.com/etesentertainmentllc/ and Facebook https://www.facebook.com/etesentertainment
   Icons in the top bar and a "Follow" column in contact; both in `#organization` sameAs.
 
 ## Schema (in index.html)
